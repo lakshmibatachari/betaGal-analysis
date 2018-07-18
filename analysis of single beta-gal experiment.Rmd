@@ -51,7 +51,7 @@ source("betaGalAnalysisFunctions.R")
 ###To start the analysis, read in the data.
 
 ```{r}
-fileName <- "sampleData/6-6-18 LB32_LB73.xlsx" #Enter your Excel file here. Remember that tab completion will help you get the path & name correct
+fileName <- "myData/7.18.18 core.xlsx" #Enter your Excel file here. Remember that tab completion will help you get the path & name correct
 OD420data <- read_excel(fileName, sheet = 2)
 OD600data <- read_excel(fileName, sheet = 3)
 ```
@@ -87,6 +87,7 @@ combinedData <-left_join(OD420data, meanCellDensities, by=c("strain", "RpoS")) %
 Two plots are shown, one using facets to create a plot for each strain, the other using colors to plot all replicates of various strains on a single plot. You don't need to use both in presentations, written documents, etc. Use the one that you think works best for your purpose. 
 
 ```{r}
+
 ggplot(combinedData) + geom_point(aes(x=RpoS, y=`Miller Units`)) + facet_grid(.~strain) 
 ggplot(combinedData) + geom_point(aes(x=RpoS, y=`Miller Units`, color=strain))
 ```
@@ -99,4 +100,15 @@ These are the replciates we use for actual calcualations of sensitivity
 expressionLevels <- meanExpressionOneReplicate(fileName)
 ```
 
+Plot individual strains
 
+```{r}
+
+strainName <- "LZ40"
+singlestrainMiller <- combinedData$`Miller Units`[combinedData$strain == strainName]
+singlestrainRpoS <- combinedData$RpoS[combinedData$strain == strainName]
+
+
+plot(singlestrainMiller ~ singlestrainRpoS, xlab = "% wildtype RpoS", ylab = "Miller Units", main = strainName)
+
+```
