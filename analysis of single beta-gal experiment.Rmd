@@ -2,6 +2,7 @@
 title: 'Stoebel Lab: Analysis of data from a single beta-gal experiment with multiple
   RpoS levels'
 output:
+  pdf_document: default
   html_document:
     df_print: paged
 ---
@@ -87,9 +88,17 @@ combinedData <-left_join(OD420data, meanCellDensities, by=c("strain", "RpoS")) %
 Two plots are shown, one using facets to create a plot for each strain, the other using colors to plot all replicates of various strains on a single plot. You don't need to use both in presentations, written documents, etc. Use the one that you think works best for your purpose. 
 
 ```{r}
+setwd("/Users/Lakshmi/Desktop/R/betaGal-analysis/myFigures")
+getwd()
+jpeg("7.18.18 grid.jpg")
+ggplot(combinedData) + geom_point(aes(x=RpoS, y=`Miller Units`)) + facet_grid(.~strain)
+dev.off()
 
-ggplot(combinedData) + geom_point(aes(x=RpoS, y=`Miller Units`)) + facet_grid(.~strain) 
+setwd("/Users/Lakshmi/Desktop/R/betaGal-analysis/myFigures")
+getwd()
+jpeg("7.18.18.jpg")
 ggplot(combinedData) + geom_point(aes(x=RpoS, y=`Miller Units`, color=strain))
+dev.off()
 ```
 
 ### Calculate and save the means at each concentration. 
@@ -111,4 +120,8 @@ singlestrainRpoS <- combinedData$RpoS[combinedData$strain == strainName]
 
 plot(singlestrainMiller ~ singlestrainRpoS, xlab = "% wildtype RpoS", ylab = "Miller Units", main = strainName)
 
+
+
+
 ```
+
