@@ -13,7 +13,9 @@ library(tidyverse)
 source("betaGalAnalysisFunctions.R")
 theme_set(theme_classic())
 
-fileNames <- c("myData/LEB 7-19-18 AM.xlsx","myData/LEB 7-19-18 PM.xlsx", "myData/LEB 7-20-18 AM.xlsx")
+#data taken on 7-19-18 is preliminary and should not be included in final analysis 
+
+fileNames <- c("myData/LEB 7-19-18 AM.xlsx","myData/LEB 7-19-18 PM.xlsx", "myData/LEB 7-20-18 AM.xlsx", "myData/LEB 7-20-18 PM.xlsx")
 
 processedFiles <- map(fileNames, meanExpressionOneReplicate)
 
@@ -21,7 +23,7 @@ combinedData <- bind_rows(processedFiles)
 ```
 
 ```{r}
-ggplot(combinedData) + geom_point(aes(x=RpoS, y=meanExpression)) + facet_grid(.~strain) 
+ggplot(combinedData) + geom_point(aes(x=RpoS, y=meanExpression)) + facet_wrap(~strain, scales = "free") 
 ```
 
 Plot mean ± SE for each RpoS level
