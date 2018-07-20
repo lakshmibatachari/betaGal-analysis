@@ -13,7 +13,7 @@ library(tidyverse)
 source("betaGalAnalysisFunctions.R")
 theme_set(theme_classic())
 
-fileNames <- c("6-6-18 LB32_LB73.xlsx","6-6-18 LB32_LB73 fake data for testing.xlsx")
+fileNames <- c("myData/LEB 7-19-18 AM.xlsx","myData/LEB 7-19-18 PM.xlsx", "myData/LEB 7-20-18 AM.xlsx")
 
 processedFiles <- map(fileNames, meanExpressionOneReplicate)
 
@@ -46,7 +46,7 @@ This function expects three RpoS levels, so for this example I'll subset out som
 
 ```{r}
 dataForSensitivity <- combinedData %>% 
-                        filter(RpoS == 0 | RpoS == 19 | RpoS == 94) 
+                        filter(RpoS == 0 | RpoS == 26 | RpoS == 89) 
 ```
 
 
@@ -63,7 +63,6 @@ Plot the data with a line to illustrate null expectation used to assess sensitiv
 If you designed your experiment with only three RpoS levels, delete the the `filter` step. Note that we have to go back a step to use use the `dayMeans` tibble.
 ```{r}
 dayMeans %>% 
-  filter(RpoS == 0 | RpoS == 19 | RpoS == 94) %>% 
   ggplot() + 
   geom_point(aes(x = RpoS, y = meanAcrossDays)) + 
   geom_errorbar(aes(x = RpoS, y = meanAcrossDays, ymax = upperErrorBar, ymin = lowerErrorBar)) + 
