@@ -15,7 +15,7 @@ theme_set(theme_classic())
 
 #data taken on 7-19-18 is preliminary and should not be included in final analysis 
 
-fileNames <- c("myData/LEB 7-19-18 Strain 34 35 36.xlsx", "myData/LEB 7-20-18 Strain 34 35 36.xlsx")
+fileNames <- c("myData/LEB 7-19-18 Strain 34 35 36.xlsx", "myData/LEB 7-20-18 Strain 34 35 36.xlsx", "myData/LEB 7-19-18 Strain 41 42 43.xlsx", "myData/LEB 7-20-18 Strain 41 42 43.xlsx")
 #fileNames <- c( "myData/LEB 7-19-18 Strain 41 42 43.xlsx",  "myData/LEB 7-20-18 Strain 41 42 43.xlsx", "myData/7.19.18 FRLZ Strain 37 38.xlsx", "myData/7.19.18 FRLZ Strain 39 40.xlsx", "myData/7.20.18 FRLZ Strain 37 38.xlsx", "myData/7.20.18 FRLZ Strain 39 40.xlsx")
 
 processedFiles <- map(fileNames, meanExpressionOneReplicate)
@@ -24,10 +24,13 @@ combinedData <- bind_rows(processedFiles)
 ```
 
 ```{r}
+
 ggplot(combinedData) + 
-  geom_point(aes(x=RpoS, y=meanExpression)) + facet_wrap(~strain, scales = "free") +
+  geom_point(aes(x=RpoS, y=meanExpression)) + 
+  facet_wrap(~strain, scales = "free") +
   labs(x = "% of wild-type RpoS", y = "LacZ expression (Miller Units)") + 
-  expand_limits(x=0, y=0)
+  expand_limits(x=0, y=0) 
+
 ```
 
 Plot mean ± SE for each RpoS level
@@ -41,7 +44,7 @@ ggplot(dayMeans) +
   geom_point(aes(x = RpoS, y = meanAcrossDays)) + 
   geom_errorbar(aes(x = RpoS, y = meanAcrossDays, ymax = upperErrorBar, ymin = lowerErrorBar, width = 8)) + 
   facet_grid(.~strain, scales = "free") +
-  ylab ("Miller Units")
+  labs(x = "% of wild-type RpoS", y = "LacZ expression (Miller Units)")
 
 #this plots the mean value for all strains, sorted by color 
 ggplot(dayMeans) + 
@@ -103,12 +106,27 @@ segmentEnds <- dayMeans %>%
 
 If you designed your experiment with only three RpoS levels, delete the the `filter` step. Note that we have to go back a step to use use the `dayMeans` tibble.
 ```{r}
+#rename strains with genotype and store in function
+genotype <- as_labeller(c(`LZ34` =  "argR", `LZ35` = "nac", `LZ36` = "ntrC", `LZ41` = "argR control", `LZ42` = "nac control", `LZ43` = "ntrC control"))
+
 dayMeans %>% 
   ggplot() + 
+  
   geom_point(aes(x = RpoS, y = meanAcrossDays), show.legend = FALSE) + 
+  
+  #creates error bars 
   geom_errorbar(aes(x = RpoS, y = meanAcrossDays, ymax = upperErrorBar, ymin = lowerErrorBar, width  = 8)) + 
-  facet_wrap(~strain, scales = "free", ncol = 3) +
+  
+  #facet_wrap creates a grid that allows us to define dimensions
+  facet_wrap(~strain, scales = "free", ncol = 3, labeller = genotype)+
+  
+  #this formats the plot titles to remove border and position text outside plot
+  theme(strip.background = element_blank(), strip.placement = "outside") +
+  
+  #this function plots the line to illustrate null expectation
   geom_segment(data = segmentEnds, mapping = aes(x = RpoS_min, xend = RpoS_max, y = expression_min, yend = expression_max)) +
+  
+  #add correct axis titles and coordinates
   labs(x = "% of wild-type RpoS", y = "LacZ expression (Miller Units)") +
   expand_limits(x = 0, y = 0)
   
