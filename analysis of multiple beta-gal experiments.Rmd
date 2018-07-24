@@ -15,7 +15,8 @@ theme_set(theme_classic())
 
 #data taken on 7-19-18 is preliminary and should not be included in final analysis 
 
-fileNames <- c("myData/LEB 7-19-18 AM.xlsx","myData/LEB 7-19-18 PM.xlsx", "myData/LEB 7-20-18 AM.xlsx", "myData/LEB 7-20-18 PM.xlsx")
+fileNames <- c("myData/LEB 7-19-18 Strain 34 35 36.xlsx", "myData/LEB 7-20-18 Strain 34 35 36.xlsx")
+#fileNames <- c( "myData/LEB 7-19-18 Strain 41 42 43.xlsx",  "myData/LEB 7-20-18 Strain 41 42 43.xlsx", "myData/7.19.18 FRLZ Strain 37 38.xlsx", "myData/7.19.18 FRLZ Strain 39 40.xlsx", "myData/7.20.18 FRLZ Strain 37 38.xlsx", "myData/7.20.18 FRLZ Strain 39 40.xlsx")
 
 processedFiles <- map(fileNames, meanExpressionOneReplicate)
 
@@ -23,7 +24,8 @@ combinedData <- bind_rows(processedFiles)
 ```
 
 ```{r}
-ggplot(combinedData) + geom_point(aes(x=RpoS, y=meanExpression)) + facet_wrap(~strain, scales = "free") 
+ggplot(combinedData) + geom_point(aes(x=RpoS, y=meanExpression)) + facet_wrap(~strain, scales = "free") +
+labs(x = "% of wild-type RpoS", y = "LacZ expression (Miller Units)")
 ```
 
 Plot mean ± SE for each RpoS level
@@ -35,11 +37,32 @@ dayMeans <- combinedData %>%
 
 ggplot(dayMeans) + 
   geom_point(aes(x = RpoS, y = meanAcrossDays)) + 
-  geom_errorbar(aes(x = RpoS, y = meanAcrossDays, ymax = upperErrorBar, ymin = lowerErrorBar)) + 
-  facet_grid(.~strain)
+  geom_errorbar(aes(x = RpoS, y = meanAcrossDays, ymax = upperErrorBar, ymin = lowerErrorBar, width = 8)) + 
+  facet_grid(.~strain, scales = "free") +
+  ylab ("Miller Units")
+
+#this plots the mean value for all strains, sorted by color 
+ggplot(dayMeans) + 
+  geom_point(aes(x=RpoS, y=meanAcrossDays, color=strain)) +
+  #geom_errorbar(aes(x = RpoS, y = meanAcrossDays, ymax = upperErrorBar, ymin = lowerErrorBar, width = 2)) +
+  labs(x = "% of wild-type RpoS", y = "LacZ expression (Miller Units)")
 
   
 ```
+```{r}
+
+strainName <- "LZ34"
+oneStrainData <- subset(dayMeans,strain == strainName)
+
+ggplot(oneStrainData) + 
+  geom_point(aes(x = RpoS, y = meanAcrossDays)) + 
+  geom_errorbar(aes(x = RpoS, y = meanAcrossDays, ymax = upperErrorBar, ymin = lowerErrorBar), width = 3) + 
+  labs(x = "% of wild-type RpoS", y = "LacZ expression (Miller Units)") + 
+  ggtitle (strainName)
+  expand_limits(x = 0, y = 0)
+```
+
+
 ##Sensitivity
 
 This section is specific for analyzing the sensitivity of a promoter. It requires three RpoS levels.
@@ -57,19 +80,37 @@ Calculate sensitivity of a promoter.
 sensitivities <- dataForSensitivity %>% 
                   group_by(strain, date, experimenter) %>%
                   summarise(sensitivity = calculateSingleSens(RpoS, meanExpression))
+show(sensitivities)
 ```
 
 
-Plot the data with a line to illustrate null expectation used to assess sensitivity. 
+Plot the data with a line to illustrate null expectation used to assess sensitivity.
+
+```{r}
+segmentEnds <- dayMeans %>%
+                filter(RpoS == 0 | RpoS == 89) %>%
+                group_by(strain) %>%
+                summarise(
+                  RpoS_min = min(RpoS),
+                  RpoS_max = max(RpoS),
+                  expression_min = min(meanAcrossDays),
+                  expression_max = max(meanAcrossDays)
+                  )
+```
+
 
 If you designed your experiment with only three RpoS levels, delete the the `filter` step. Note that we have to go back a step to use use the `dayMeans` tibble.
 ```{r}
 dayMeans %>% 
   ggplot() + 
-  geom_point(aes(x = RpoS, y = meanAcrossDays)) + 
-  geom_errorbar(aes(x = RpoS, y = meanAcrossDays, ymax = upperErrorBar, ymin = lowerErrorBar)) + 
-  facet_grid(.~strain)
-                 
+  geom_point(aes(x = RpoS, y = meanAcrossDays), show.legend = FALSE) + 
+  geom_errorbar(aes(x = RpoS, y = meanAcrossDays, ymax = upperErrorBar, ymin = lowerErrorBar, width  = 8)) + 
+  facet_wrap(~strain, scales = "free", ncol = 3) +
+  geom_segment(data = segmentEnds, mapping = aes(x = RpoS_min, xend = RpoS_max, y = expression_min, yend = expression_max)) +
+  labs(x = "% of wild-type RpoS", y = "LacZ expression (Miller Units)") +
+  expand_limits(x = 0, y = 0)
+  
 ```
+
 
 
