@@ -24,8 +24,10 @@ combinedData <- bind_rows(processedFiles)
 ```
 
 ```{r}
-ggplot(combinedData) + geom_point(aes(x=RpoS, y=meanExpression)) + facet_wrap(~strain, scales = "free") +
-labs(x = "% of wild-type RpoS", y = "LacZ expression (Miller Units)")
+ggplot(combinedData) + 
+  geom_point(aes(x=RpoS, y=meanExpression)) + facet_wrap(~strain, scales = "free") +
+  labs(x = "% of wild-type RpoS", y = "LacZ expression (Miller Units)") + 
+  expand_limits(x=0, y=0)
 ```
 
 Plot mean ± SE for each RpoS level
