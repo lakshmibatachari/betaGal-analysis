@@ -52,7 +52,7 @@ source("betaGalAnalysisFunctions.R")
 ###To start the analysis, read in the data.
 
 ```{r}
-fileName <- "myData/LEB 7-19-18 AM.xlsx" #Enter your Excel file here. Remember that tab completion will help you get the path & name correct
+fileName <- "myData/7.20.18 FRLZ Strain 39 40.xlsx" #Enter your Excel file here. Remember that tab completion will help you get the path & name correct
 OD420data <- read_excel(fileName, sheet = 2)
 OD600data <- read_excel(fileName, sheet = 3)
 ```
@@ -89,8 +89,12 @@ Two plots are shown, one using facets to create a plot for each strain, the othe
 
 ```{r}
 
-ggplot(combinedData) + geom_point(aes(x=RpoS, y=`Miller Units`)) + facet_grid(.~strain)
-ggplot(combinedData) + geom_point(aes(x=RpoS, y=`Miller Units`, color=strain))
+ggplot(combinedData) + geom_point(aes(x=RpoS, y=`Miller Units`)) +
+  facet_wrap(~strain, ncol=2, scales = "free") +
+  expand_limits(x=0, y=0)
+
+ggplot(combinedData) + geom_point(aes(x=RpoS, y=`Miller Units`, color=strain)) +
+  expand_limits(x=0, y=0)
 
 ```
 
@@ -102,19 +106,20 @@ These are the replciates we use for actual calcualations of sensitivity
 expressionLevels <- meanExpressionOneReplicate(fileName)
 ```
 
-Plot individual strains
+Plot one biological replicate of an individual strain
 
 ```{r}
 
-strainName <- "LZ35"
-singlestrainMiller <- combinedData$`Miller Units`[combinedData$strain == strainName]
-singlestrainRpoS <- combinedData$RpoS[combinedData$strain == strainName]
+
+strainName <- "FR39" #enter the strain name you wish to plot
+singleStrain <- subset(combinedData, strain = strainName) 
 
 
-plot(singlestrainMiller ~ singlestrainRpoS, xlab = "% wildtype RpoS", ylab = "Miller Units", main = strainName)
-
-
-
+ggplot(singleStrain) + 
+  geom_point(aes(x = RpoS, y = `Miller Units`)) + 
+  labs(x = "% of wild-type RpoS", y = "LacZ expression (Miller Units)") + 
+  ggtitle (strainName) + 
+  expand_limits(x = 0, y = 0)
 
 ```
 
