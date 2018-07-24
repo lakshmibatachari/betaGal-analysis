@@ -58,7 +58,7 @@ ggplot(oneStrainData) +
   geom_point(aes(x = RpoS, y = meanAcrossDays)) + 
   geom_errorbar(aes(x = RpoS, y = meanAcrossDays, ymax = upperErrorBar, ymin = lowerErrorBar), width = 3) + 
   labs(x = "% of wild-type RpoS", y = "LacZ expression (Miller Units)") + 
-  ggtitle (strainName)
+  ggtitle (strainName) +
   expand_limits(x = 0, y = 0)
 ```
 
