@@ -13,22 +13,26 @@ theme_set(theme_classic())
 Import your files here:
 ```{r}
 
-fileNames <- c("myData/LEB 7-19-18 Strain 34 35 36.xlsx", "myData/LEB 7-19-18 Strain 41 42 43.xlsx", "myData/LEB 7-20-18 Strain 34 35 36.xlsx", "myData/LEB 7-20-18 Strain 41 42 43.xlsx", "myData/LEB 7-25-18 Strain 41 42 43.xlsx", "myData/LEB 7-26-18 Strain 34 35 36.xlsx","myData/LEB 7-25-18 Strain 34 35 36 unsure about arabinose conc.xlsx")
+fileNames <- c("myData/LEB 7-19-18 Strain 34 35 36.xlsx", "myData/LEB 7-19-18 Strain 41 42 43.xlsx", "myData/LEB 7-20-18 Strain 34 35 36.xlsx", "myData/LEB 7-20-18 Strain 41 42 43.xlsx", "myData/LEB 7-25-18 Strain 41 42 43.xlsx", "myData/LEB 7-26-18 Strain 34 35 36.xlsx","myData/LEB 7-25-18 Strain 34 35 36 unsure about arabinose conc.xlsx", "myData/LEB 7-26-18 Strain 34 35 36.xlsx", "myData/LEB 7-26-18 Strain 41 42 43.xlsx")
+
 processedFiles <- map(fileNames, meanExpressionOneReplicate)
 
 combinedData <- bind_rows(processedFiles)
 ```
 
-Create vectors/variables we'll need in the next step
+Create vectors/variables we'll need in the next step. 
 ```{r}
 #set number of randomizations
 sampleSize <- 10000
 
+#Set number of biological replicates
+repSize <- 4
+
 #create vector for the 26% RpoS level estimates
-medianEstimate <- vector(length=sampleSize)
+linear26Est <- vector(length=sampleSize)
 
 #define strain
-Strain <- "LZ36"
+Strain <- "LZ43"
 
 #store mean expression values for the selected strain at 0%, 26%, and 89%
 rpoS0 <- subset(combinedData, RpoS == 0 & strain == Strain, select = c(meanExpression))
@@ -41,8 +45,8 @@ rpos26Vect <- as.numeric(as.character(rpoS26$meanExpression))
 rpos89Vect <- as.numeric(as.character(rpoS89$meanExpression))
 
 #create vectors to store randomly sampled expression values at 0% and 89%
-zeroPercentC <- vector(mode = "numeric", length=4)
-eightyNinePercentC <- vector(mode = "numeric", length=4)
+zeroPercentC <- vector(mode = "numeric", length= repSize)
+eightyNinePercentC <- vector(mode = "numeric", length= repSize)
 ```
 
 
@@ -51,10 +55,10 @@ Now we sample from the data 10,000 times:
 #conduct resampling 10,000 times
 for (i in 1:sampleSize) 
 {
-replicates <- sample(c(1:4), replace = TRUE, 4) #sample numbers 1-4 four times with replacement. This vector will be used to randomly pick an expression value from the vector containing all our of experimental values
+replicates <- sample(c(1:repSize), replace = TRUE, repSize) #sample numbers the same number of times as biological replicates with replacement. This vector will be used to randomly pick an expression value from the vector containing all our of experimental values
 
-#randomly samples eight expression values each at 0% and 89%
-for (j in 1:4) 
+#randomly samples biological replicate number expression values each at 0% and 89%
+for (j in 1:repSize) 
 {
 #choose an expresion value from 0% and 89% RpoS by indexing with the number that was randomly sampled and stored in the vector 'replicates'
   
@@ -71,22 +75,34 @@ fit <- lm(c(zeroPercent, eightyNinePercent) ~ c(0, 89))
 
 #estimates expression at the 26% RpoS level using the slope and y-intercept of the linear fit, stores estimates in vector
 estimate <- 26*coef(fit)[2] + coef(fit)[1]
-medianEstimate[i] <- estimate
+linear26Est[i] <- estimate
 }
+```
 
+
+Now we have a distribution of expression values at 26% as predicted by our linear fit. We can use this distribution to determine the upper and lower bounds of the 95% confidence interval and the p-value for sensitivity. The null hypothesis is that the expression profile is linear. 
+
+```{r}
 #sorts 26% level estimates from lowest to highest
-medianEstimate <- sort(medianEstimate)
+linear26Est <- sort(linear26Est)
 
-#calculates lower and upper bounds for the 95% confidence interval of the expression at 26% RpoS 
-medianEstimate[250]
-medianEstimate[9750]
+#calculates lower and upper bounds for the 95% confidence interval of the expression at 26% RpoS and prints
+lowerBound <- linear26Est[sampleSize*0.025]
+upperBound <- linear26Est[sampleSize*0.975]
+
+lowerBound
+upperBound
 
 #calculates p-value for sensitivity by determining probability that the median 26% RpoS value will fall outside of the 95% confidence interval
-if (Strain == "LB41") {
-  sum(medianEstimate < median(rpos26Vect))/numberReplicates
+if (median(rpos26Vect) > median(linear26Est)){ #checks so that a p-value will always be generated instead of 1-p
+  1-sum(median(rpos26Vect) > linear26Est)/sampleSize
 } else {
-  sum(medianEstimate > median(rpos26Vect))/numberReplicates
+  sum(median(rpos26Vect) > linear26Est)/sampleSize
 }
+
+#show histogram expression at 26% as predicted by linear fit
+hist(linear26Est)
+
 
 ```
 
