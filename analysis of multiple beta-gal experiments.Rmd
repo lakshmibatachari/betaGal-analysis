@@ -13,9 +13,10 @@ library(tidyverse)
 source("betaGalAnalysisFunctions.R")
 theme_set(theme_classic())
 
-#data taken on 7-19-18 is preliminary and should not be included in final analysis 
+#Data taken on 7-19-18 is preliminary and should not be included in final analysis. Data taken on 7-26-18 are from Liya's frozen strains. All other data are from Francisco's frozen strains.
 
-fileNames <- c("myData/LEB 7-19-18 Strain 34 35 36.xlsx", "myData/LEB 7-20-18 Strain 34 35 36.xlsx", "myData/LEB 7-19-18 Strain 41 42 43.xlsx", "myData/LEB 7-20-18 Strain 41 42 43.xlsx")
+fileNames <- c("myData/LEB 7-19-18 Strain 34 35 36.xlsx", "myData/LEB 7-19-18 Strain 41 42 43.xlsx", "myData/LEB 7-20-18 Strain 34 35 36.xlsx", "myData/LEB 7-20-18 Strain 41 42 43.xlsx", "myData/LEB 7-25-18 Strain 34 35 36 unsure about arabinose conc.xlsx", "myData/LEB 7-25-18 Strain 41 42 43.xlsx", "myData/LEB 7-26-18 Strain 34 35 36.xlsx", "myData/LEB 7-26-18 Strain 41 42 43.xlsx", "myData/LEB 7-27-18 Strain 34 35 36.xlsx")
+
 #fileNames <- c( "myData/LEB 7-19-18 Strain 41 42 43.xlsx",  "myData/LEB 7-20-18 Strain 41 42 43.xlsx", "myData/7.19.18 FRLZ Strain 37 38.xlsx", "myData/7.19.18 FRLZ Strain 39 40.xlsx", "myData/7.20.18 FRLZ Strain 37 38.xlsx", "myData/7.20.18 FRLZ Strain 39 40.xlsx")
 
 processedFiles <- map(fileNames, meanExpressionOneReplicate)
@@ -56,7 +57,7 @@ ggplot(dayMeans) +
 ```
 ```{r}
 
-strainName <- "LZ34"
+strainName <- "LZ35"
 oneStrainData <- subset(dayMeans,strain == strainName)
 
 ggplot(oneStrainData) + 
@@ -85,7 +86,7 @@ Calculate sensitivity of a promoter.
 sensitivities <- dataForSensitivity %>% 
                   group_by(strain, date, experimenter) %>%
                   summarise(sensitivity = calculateSingleSens(RpoS, meanExpression))
-show(sensitivities)
+
 ```
 
 
@@ -107,7 +108,7 @@ segmentEnds <- dayMeans %>%
 If you designed your experiment with only three RpoS levels, delete the the `filter` step. Note that we have to go back a step to use use the `dayMeans` tibble.
 ```{r}
 #rename strains with genotype and store in function
-genotype <- as_labeller(c(`LZ34` =  "argR", `LZ35` = "nac", `LZ36` = "ntrC", `LZ41` = "argR control", `LZ42` = "nac control", `LZ43` = "ntrC control"))
+genotype <- as_labeller(c(`LZ34` = "argR", `LZ35` = "nac", `LZ36` = "ntrC", `LZ41` = "argR control", `LZ42` = "nac control", `LZ43` = "ntrC control"))
 
 dayMeans %>% 
   ggplot() + 
@@ -132,5 +133,12 @@ dayMeans %>%
   
 ```
 
+```{r}
+ggplot(data=sensitivities, aes(sensitivities$sensitivity)) + 
+  geom_histogram() +
+  facet_wrap(~strain, scales = "free") +
+  stat_bin(bins = 12) + 
+  labs(x = "sensitivity")
+```
 
 
