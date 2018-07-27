@@ -52,7 +52,7 @@ source("betaGalAnalysisFunctions.R")
 ###To start the analysis, read in the data.
 
 ```{r}
-fileName <- "myData/LEB 7-27-18 Strain 34 35 36.xlsx" #Enter your Excel file here. Remember that tab completion will help you get the path & name correct
+fileName <- "myData/LEB 7-27-18 Strain 41 42 43.xlsx" #Enter your Excel file here. Remember that tab completion will help you get the path & name correct
 OD420data <- read_excel(fileName, sheet = 2)
 OD600data <- read_excel(fileName, sheet = 3)
 ```
@@ -67,7 +67,7 @@ View(OD600data)
 ### Calculate the measures of expression and cell density
 
 We're going to start by constructing a new data frame that has just the elements we need for our analysis 
-```{r}
+```{r, message = FALSE}
 meanCellDensities <-  filter(OD600data, strain != "blank") %>%
                   mutate(trueDensity = `Blank 600`*as.numeric(dilutionFactor)) %>%
                   group_by(strain, RpoS) %>% 
@@ -102,7 +102,7 @@ ggplot(combinedData) + geom_point(aes(x=RpoS, y=`Miller Units`, color=strain)) +
 
 These are the replciates we use for actual calcualations of sensitivity
 
-```{r}
+```{r, message = FALSE}
 expressionLevels <- meanExpressionOneReplicate(fileName)
 ```
 

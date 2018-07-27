@@ -15,7 +15,7 @@ theme_set(theme_classic())
 
 #Data taken on 7-19-18 is preliminary and should not be included in final analysis. Data taken on 7-26-18 are from Liya's frozen strains. All other data are from Francisco's frozen strains.
 
-fileNames <- c("myData/LEB 7-19-18 Strain 34 35 36.xlsx", "myData/LEB 7-19-18 Strain 41 42 43.xlsx", "myData/LEB 7-20-18 Strain 34 35 36.xlsx", "myData/LEB 7-20-18 Strain 41 42 43.xlsx", "myData/LEB 7-25-18 Strain 34 35 36 unsure about arabinose conc.xlsx", "myData/LEB 7-25-18 Strain 41 42 43.xlsx", "myData/LEB 7-26-18 Strain 34 35 36.xlsx", "myData/LEB 7-26-18 Strain 41 42 43.xlsx", "myData/LEB 7-27-18 Strain 34 35 36.xlsx")
+fileNames <- c("myData/LEB 7-19-18 Strain 34 35 36 prelim.xlsx", "myData/LEB 7-19-18 Strain 41 42 43 prelim.xlsx", "myData/LEB 7-20-18 Strain 34 35 36.xlsx", "myData/LEB 7-20-18 Strain 41 42 43.xlsx", "myData/LEB 7-25-18 Strain 34 35 36.xlsx", "myData/LEB 7-25-18 Strain 41 42 43.xlsx", "myData/LEB 7-26-18 Strain 34 35 36.xlsx", "myData/LEB 7-26-18 Strain 41 42 43.xlsx", "myData/LEB 7-27-18 Strain 34 35 36.xlsx", "myData/LEB 7-27-18 Strain 41 42 43.xlsx")
 
 #fileNames <- c( "myData/LEB 7-19-18 Strain 41 42 43.xlsx",  "myData/LEB 7-20-18 Strain 41 42 43.xlsx", "myData/7.19.18 FRLZ Strain 37 38.xlsx", "myData/7.19.18 FRLZ Strain 39 40.xlsx", "myData/7.20.18 FRLZ Strain 37 38.xlsx", "myData/7.20.18 FRLZ Strain 39 40.xlsx")
 
@@ -57,7 +57,7 @@ ggplot(dayMeans) +
 ```
 ```{r}
 
-strainName <- "LZ35"
+strainName <- "LZ36"
 oneStrainData <- subset(dayMeans,strain == strainName)
 
 ggplot(oneStrainData) + 
@@ -78,6 +78,7 @@ This function expects three RpoS levels, so for this example I'll subset out som
 ```{r}
 dataForSensitivity <- combinedData %>% 
                         filter(RpoS == 0 | RpoS == 26 | RpoS == 89) 
+
 ```
 
 
@@ -86,6 +87,7 @@ Calculate sensitivity of a promoter.
 sensitivities <- dataForSensitivity %>% 
                   group_by(strain, date, experimenter) %>%
                   summarise(sensitivity = calculateSingleSens(RpoS, meanExpression))
+
 
 ```
 
@@ -136,9 +138,10 @@ dayMeans %>%
 ```{r}
 ggplot(data=sensitivities, aes(sensitivities$sensitivity)) + 
   geom_histogram() +
-  facet_wrap(~strain, scales = "free") +
-  stat_bin(bins = 12) + 
+  facet_wrap(~strain, scales = "free", labeller = genotype) +
+  stat_bin(bins = 15) + 
   labs(x = "sensitivity")
+  expand_limits(x = 0, y = 0)
 ```
 
 
