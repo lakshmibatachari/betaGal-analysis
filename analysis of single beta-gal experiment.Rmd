@@ -52,7 +52,7 @@ source("betaGalAnalysisFunctions.R")
 ###To start the analysis, read in the data.
 
 ```{r}
-fileName <- "myData/LEB 7-27-18 Strain 41 42 43.xlsx" #Enter your Excel file here. Remember that tab completion will help you get the path & name correct
+fileName <- "myData/LEB 7-30-18 Strain 34 35 36.xlsx" #Enter your Excel file here. Remember that tab completion will help you get the path & name correct
 OD420data <- read_excel(fileName, sheet = 2)
 OD600data <- read_excel(fileName, sheet = 3)
 ```
@@ -74,9 +74,10 @@ meanCellDensities <-  filter(OD600data, strain != "blank") %>%
                   summarise(meanDensity = mean(trueDensity)) 
   
 
+#includes a step to filter out blanks and "dropped" cells
 combinedData <-left_join(OD420data, meanCellDensities, by=c("strain", "RpoS")) %>%
-                select(`Blank 420`, experimenter, date, strain, RpoS, dilutionFactor, volumeAssayed, reactionTime, meanDensity) %>%
-                filter(strain != "blank") %>%
+                select(`Blank 420`, experimenter, date, strain, RpoS, dilutionFactor, volumeAssayed, reactionTime, meanDensity, drop) %>%
+                filter(strain != "blank" & drop == "FALSE") %>% 
                 rename(A420 = `Blank 420`) %>%
                 type_convert() %>%
                 mutate(`Miller Units` = 1000*A420*dilutionFactor/(meanDensity*volumeAssayed*reactionTime))
