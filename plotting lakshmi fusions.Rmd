@@ -1,0 +1,90 @@
+---
+title: "LB data analysis"
+author: "Dan Stoebel"
+date: "October 24, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+theme_set(theme_classic())
+```
+
+
+```{r, echo=FALSE}
+LBfusions<-read.table(file = "LB BetaGal.txt", header = T, sep="\t")
+LBfusions$millerUnits <- LBfusions$millerUnits/10 #Lakshmi failed to take the OD600 dilution into account when she calculated MillerUnits
+#fusions<-read.table(file = "oneRepData.txt", header = T, sep="\t")
+
+MKDfusions<-read.table(file = "MKD beta gal data.txt", header = T, sep="\t")
+
+names(MKDfusions)[2] <- "millerUnits"
+
+fusions<- rbind(LBfusions, MKDfusions)
+
+fusionAves <- tapply(X = fusions$millerUnits, INDEX = list(fusions$strain, as.factor(fusions$rpoS)), FUN = mean, subset=dateToAnalyze)
+fusionSDs <- tapply(X = fusions$millerUnits, INDEX = list(fusions$strain, as.factor(fusions$rpoS)), FUN = sd)
+fusionCounts<-tapply(X = fusions$millerUnits, INDEX = list(fusions$strain, as.factor(fusions$rpoS)), FUN = length)
+
+#Get a vector of the RpoS levels:
+rpoSLevels<-as.numeric(colnames(fusionAves))
+
+#Load functions for plotting
+  source("lacZPlottingFunctions.R")
+
+```
+
+Plot the averages with standard errors:
+```{r}
+opar<- par() #Save the graphical parameters
+par(mfrow=c(1,3), mar=c(5, 6, 4, 2)+.1)
+options(scipen = 8)
+#plotBetaGals(strain = "DMS2671", main = , ylab=, ylim=)
+plotBetaGals(strain = "LB4", main = expression(paste("Whole ", italic("gadB"), " promoter")), xlab="", ylab="", ylim=c(0,40000))
+plotBetaGals(strain = "LB1", main = expression(paste("Half ", italic("gadB"), " promoter")), xlab="", ylab="", ylim=c(0,60000))
+plotBetaGals(strain = "LB5", main = expression(paste("Core ", italic("gadB"), "promoter")), ylab="", ylim=)
+#png()
+par(opar)
+#options(scipen = 0)
+
+```
+```{r}
+#calculate mean expression levels + se
+meanFusions <- fusions %>%
+                  group_by(strain, rpoS) %>% 
+                  filter(strain == "LB5" | strain == "MKD15") %>%
+                  summarize(meanFusion = mean(millerUnits), seFusion = sd(millerUnits)/sqrt(length(millerUnits)))%>%
+              mutate(upper = meanFusion + seFusion, lower = meanFusion - seFusion)
+
+show(meanFusions)
+
+#create line segment
+segmentEndsC <- meanFusions %>%
+              filter(rpoS == 0 | rpoS == 89) %>%
+                summarise(
+                RpoS_minC = min(rpoS),
+                RpoS_maxC = max(rpoS),
+                expression_minC = min(meanFusion),
+                expression_maxC = max(meanFusion)
+                  )
+#rename strains
+variant <- as_labeller(c(`LB1` = "Half gadB promoter", `LB4` = "Whole gadB promoter", `LB5` = "Core gadB promoter", `MKD13` = "Half astC promoter", `MKD15` = "Core astC promoter"))
+
+#plot data with line
+ggplot(meanFusions) +  geom_point(aes(x=rpoS, y= meanFusion)) +
+  facet_wrap(~strain, ncol=2, scales = "free", labeller = variant) +
+  geom_errorbar(aes(x = rpoS, y = meanFusion, ymax = upper, ymin = lower, width = 8)) + 
+  theme(aspect.ratio = 0.5) +
+  theme(strip.background = element_blank(), strip.placement = "outside") +
+  #this function plots the line to illustrate null expectation
+  #add correct axis titles and coordinates
+  labs(x = "% of wild-type RpoS", y = "LacZ expression (Miller Units)") +
+  expand_limits(x = 0, y = 0) +
+  geom_segment(data = segmentEndsC, mapping = aes(x = RpoS_minC, xend = RpoS_maxC, y = expression_minC, yend = expression_maxC)) 
+ 
+  
+
+
+
+```
