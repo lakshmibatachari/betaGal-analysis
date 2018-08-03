@@ -14,10 +14,10 @@ source("betaGalAnalysisFunctions.R")
 theme_set(theme_classic())
 
 
-#Data taken on 7-18-18 and 7-19-18 are preliminary and should not be included in final analysis. Data taken on 7-25-18 and 7-26-18 are from Liya's frozen strains. All other data are from Francisco's frozen strains. I've created different variations of 'fileNames' to run code on subsets of the data. 
+#Data taken on 7-18-18 and 7-19-18 are preliminary and should not be included in final analysis. Data taken on 7-25-18 and 7-26-18 are from Liya's frozen strains. All other data are from Francisco's frozen strains.
 
-#gadB wt (CRD38) and astC wt (CRD39)
-#fileNames <- c("CRDdata/CRD 7-17-18 OD420 and OD600 afternoon.xlsx", "CRDdata/CRD 7-18-18 OD420 and OD600 morning.xlsx", "CRDdata/CRD 7-19-18 OD420 and OD600 afternoon.xlsx", "CRDdata/RAN 7-24-18 BETA GAL RAN11, RAN12, RAN13.xlsx", "CRDdata/RAN 7-26-18 BETA GAL RAN11, RAN12, RAN13.xlsx", "CRDdata/RAN 7-27-18 BETA GAL RAN11, RAN12.xlsx", "CRDdata/RAN 7-28-18 BETA GAL RAN11, RAN12, RAN13.xlsx", "CRDdata/RAN 7-29-18 BETA GAL RAN11, RAN12, RAN13.xlsx")
+#gadB and astC wt
+fileNames <- c("CRDdata/CRD 7-17-18 OD420 and OD600 afternoon.xlsx", "CRDdata/CRD 7-18-18 OD420 and OD600 morning.xlsx", "CRDdata/CRD 7-19-18 OD420 and OD600 afternoon.xlsx", "CRDdata/RAN 7-24-18 BETA GAL RAN11, RAN12, RAN13.xlsx", "CRDdata/RAN 7-26-18 BETA GAL RAN11, RAN12, RAN13.xlsx", "CRDdata/RAN 7-27-18 BETA GAL RAN11, RAN12.xlsx", "CRDdata/RAN 7-28-18 BETA GAL RAN11, RAN12, RAN13.xlsx", "CRDdata/RAN 7-29-18 BETA GAL RAN11, RAN12, RAN13.xlsx")
 
 #astC controls
 #fileNames <- c("myData/LEB 7-20-18 Strain 41 42 43.xlsx", "myData/LEB 7-25-18 Strain 41 42 43.xlsx", "myData/LEB 7-26-18 Strain 41 42 43.xlsx", "myData/LEB 7-27-18 Strain 41 42 43.xlsx", "myData/LEB 7-30-18 Strain 41 42 43.xlsx", "myData/LEB 7-31-18 Strain 41 42 43.xlsx")
@@ -35,7 +35,7 @@ theme_set(theme_classic())
 #fileNames <- c("FRdata/7.19.18 FRLZ Strain 31 33.xlsx","FRdata/7.19.18 FRLZ Strain 32 30.xlsx", "FRdata/7.20.18 FRLZ Strain 31 33.xlsx", "FRdata/7.20.18 FRLZ Strain 32 30.xlsx", "FRdata/7.23.18 FRLZ Strain 31 33.xlsx", "FRdata/7.23.18 FRLZ Strain 32 30.xlsx", "FRdata/7.26.18 FRLZ Strain 31 33.xlsx", "FRdata/7.26.18 FRLZ Strain 32 30.xlsx", "FRdata/7.27.18 FRLZ Strain 31 33.xlsx", "FRdata/7.27.18 FRLZ Strain 32 30.xlsx", "myData/LEB 8-1-18 Strain 30 31 32 33.xlsx")
 
 #gadB mutants + wt
-fileNames <- c("FRdata/7.19.18 FRLZ Strain 31 33.xlsx","FRdata/7.19.18 FRLZ Strain 32 30.xlsx", "FRdata/7.20.18 FRLZ Strain 31 33.xlsx", "FRdata/7.20.18 FRLZ Strain 32 30.xlsx", "FRdata/7.23.18 FRLZ Strain 31 33.xlsx", "FRdata/7.23.18 FRLZ Strain 32 30.xlsx", "FRdata/7.26.18 FRLZ Strain 31 33.xlsx", "FRdata/7.26.18 FRLZ Strain 32 30.xlsx", "FRdata/7.27.18 FRLZ Strain 31 33.xlsx", "FRdata/7.27.18 FRLZ Strain 32 30.xlsx", "myData/LEB 8-1-18 Strain 30 31 32 33.xlsx", "CRDdata/CRD 7-17-18 OD420 and OD600 afternoon.xlsx", "CRDdata/CRD 7-18-18 OD420 and OD600 morning.xlsx", "CRDdata/CRD 7-19-18 OD420 and OD600 afternoon.xlsx", "CRDdata/RAN 7-24-18 BETA GAL RAN11, RAN12, RAN13.xlsx", "CRDdata/RAN 7-26-18 BETA GAL RAN11, RAN12, RAN13.xlsx", "CRDdata/RAN 7-27-18 BETA GAL RAN11, RAN12.xlsx", "CRDdata/RAN 7-28-18 BETA GAL RAN11, RAN12, RAN13.xlsx", "CRDdata/RAN 7-29-18 BETA GAL RAN11, RAN12, RAN13.xlsx")
+#fileNames <- c("FRdata/7.19.18 FRLZ Strain 31 33.xlsx","FRdata/7.19.18 FRLZ Strain 32 30.xlsx", "FRdata/7.20.18 FRLZ Strain 31 33.xlsx", "FRdata/7.20.18 FRLZ Strain 32 30.xlsx", "FRdata/7.23.18 FRLZ Strain 31 33.xlsx", "FRdata/7.23.18 FRLZ Strain 32 30.xlsx", "FRdata/7.26.18 FRLZ Strain 31 33.xlsx", "FRdata/7.26.18 FRLZ Strain 32 30.xlsx", "FRdata/7.27.18 FRLZ Strain 31 33.xlsx", "FRdata/7.27.18 FRLZ Strain 32 30.xlsx", "myData/LEB 8-1-18 Strain 30 31 32 33.xlsx", "CRDdata/CRD 7-17-18 OD420 and OD600 afternoon.xlsx", "CRDdata/CRD 7-18-18 OD420 and OD600 morning.xlsx", "CRDdata/CRD 7-19-18 OD420 and OD600 afternoon.xlsx", "CRDdata/RAN 7-24-18 BETA GAL RAN11, RAN12, RAN13.xlsx", "CRDdata/RAN 7-26-18 BETA GAL RAN11, RAN12, RAN13.xlsx", "CRDdata/RAN 7-27-18 BETA GAL RAN11, RAN12.xlsx", "CRDdata/RAN 7-28-18 BETA GAL RAN11, RAN12, RAN13.xlsx", "CRDdata/RAN 7-29-18 BETA GAL RAN11, RAN12, RAN13.xlsx")
 
 #astC mutants + wt
 #fileNames <- c("myData/LEB 7-20-18 Strain 34 35 36.xlsx", "myData/LEB 7-25-18 Strain 34 35 36.xlsx", "myData/LEB 7-26-18 Strain 34 35 36.xlsx", "myData/LEB 7-27-18 Strain 34 35 36.xlsx", "myData/LEB 7-30-18 Strain 34 35 36.xlsx", "myData/LEB 7-31-18 Strain 34 35 36.xlsx", "CRDdata/CRD 7-17-18 OD420 and OD600 afternoon.xlsx", "CRDdata/CRD 7-18-18 OD420 and OD600 morning.xlsx", "CRDdata/CRD 7-19-18 OD420 and OD600 afternoon.xlsx", "CRDdata/RAN 7-24-18 BETA GAL RAN11, RAN12, RAN13.xlsx", "CRDdata/RAN 7-26-18 BETA GAL RAN11, RAN12, RAN13.xlsx", "CRDdata/RAN 7-27-18 BETA GAL RAN11, RAN12.xlsx", "CRDdata/RAN 7-28-18 BETA GAL RAN11, RAN12, RAN13.xlsx", "CRDdata/RAN 7-29-18 BETA GAL RAN11, RAN12, RAN13.xlsx")
@@ -45,7 +45,6 @@ processedFiles <- map(fileNames, meanExpressionOneReplicate)
 combinedData <- bind_rows(processedFiles)
 ```
 
-Plot lacZ expression vs. RpoS for each strain
 ```{r}
 
 ggplot(combinedData) + 
@@ -56,11 +55,10 @@ ggplot(combinedData) +
 
 ```
 
-Plot mean expression ± SE for each RpoS level as well as an overlaid plot of expression profiles for all strains.
+Plot mean ± SE for each RpoS level
 ```{r}
 dayMeans <- combinedData %>% 
               group_by(strain, RpoS) %>% 
-              #filter(strain =="FR30") %>% #use this line to view individual strains
               summarise(meanAcrossDays = mean(meanExpression), sdAcrossDays = sd(meanExpression)/sqrt(length(meanExpression))) %>%
               mutate(upperErrorBar = meanAcrossDays + sdAcrossDays, lowerErrorBar = meanAcrossDays - sdAcrossDays)
 
@@ -73,10 +71,12 @@ ggplot(dayMeans) +
 #this plots the mean value for all strains, sorted by color 
 ggplot(dayMeans) + 
   geom_point(aes(x=RpoS, y=meanAcrossDays, color=strain)) +
+  #geom_errorbar(aes(x = RpoS, y = meanAcrossDays, ymax = upperErrorBar, ymin = lowerErrorBar, width = 2)) +
   labs(x = "% of wild-type RpoS", y = "LacZ expression (Miller Units)")
 
   
 ```
+
 
 
 ##Sensitivity
@@ -98,7 +98,48 @@ sensitivities <- dataForSensitivity %>%
                   group_by(strain, date, experimenter) %>%
                   summarise(sensitivity = calculateSingleSens(RpoS, meanExpression))
 
+#plot mean sensitivity value ± SE for each strain 
+meanSensitivities <- sensitivities %>%
+                  group_by(strain) %>% 
+                  summarize(meanSensitivity = mean(sensitivity), se = sd(sensitivity)/sqrt(length(sensitivity)))%>%
+              mutate(upperError = meanSensitivity + se, lowerError = meanSensitivity - se)
+
+show(meanSensitivities)
+
+ggplot(meanSensitivities) + 
+  geom_point(aes(x = strain, y = meanSensitivity)) + 
+  geom_errorbar(aes(x = strain, y = meanSensitivity, ymax = upperError, ymin = lowerError, width = 0.1)) + 
+  labs(x = "strain", y = "sensitivity")
+
+
+
 ```
+
+Test whether sensitivities are significantly different
+```{r}
+#sensitivity.aov <- aov(sensitivity ~ strain, data = sensitivities)
+#summary(sensitivity.aov)
+#TukeyHSD(sensitivity.aov)
+
+#Mann whitney u
+
+WT <- "FR31"
+mutant <- "FR33"
+
+set1 <- subset(sensitivities, strain == WT)
+set2 <- subset(sensitivities, strain == mutant)
+
+table <- rbind(set1, set2)
+
+#wilcox.test(sensitivity~strain, data = table)
+#t.test(set2$sensitivity, mu = 0)
+
+
+
+
+
+```
+
 
 
 Plot the data with a line to illustrate null expectation used to assess sensitivity.
@@ -120,38 +161,30 @@ If you designed your experiment with only three RpoS levels, delete the the `fil
 ```{r}
 
 
-#rename strains with genotype and store in 'genotype' variable
+#rename strains with genotype and store in function
 genotype <- as_labeller(c(`LZ34` = "ΔargR", `LZ35` = "Δnac", `LZ36` = "ΔntrC", `LZ41` = "argR control", `LZ42` = "nac control", `LZ43` = "ntrC control", `FR30` = "ΔgadX", `FR31` = "ΔgadW", `FR32` = "ΔgadXYW", `FR33` = "ΔgadE", `FR37` = "gadX control", `FR38` = "gadW control", `FR39` = "gadXYW control", `FR40` = "gadE control", `CRD38` = "gadB wt", `CRD39` = "astC wt"))
 
-#plot mean expression ± SE with a line
+
 dayMeans %>% 
   ggplot() + 
   geom_point(aes(x = RpoS, y = meanAcrossDays), show.legend = FALSE) + 
-  
   #creates error bars 
   geom_errorbar(aes(x = RpoS, y = meanAcrossDays, ymax = upperErrorBar, ymin = lowerErrorBar, width  = 8)) + 
-  
   #facet_wrap creates a grid that allows us to define dimensions
   facet_wrap(~strain, scales = "free", ncol = 2, labeller = genotype) +
-  
   #this formats the plot titles to remove border and position text outside plot
-  theme(aspect.ratio = 0.5) +
-  xlim(0, 100) +
-  theme(strip.background = element_blank(), strip.placement = "outside") +
   
+  theme(aspect.ratio = 0.5) +
+  xlim(-5, 100) +
+  theme(strip.background = element_blank(), strip.placement = "outside") +
   #this function plots the line to illustrate null expectation
   geom_segment(data = segmentEnds, mapping = aes(x = RpoS_min, xend = RpoS_max, y = expression_min, yend = expression_max)) +
-  
   #add correct axis titles and coordinates
   labs(x = "% of wild-type RpoS", y = "LacZ expression (Miller Units)") +
-  
-  #axis begins at (0,0)
   expand_limits(x = 0, y = 0) 
 
 ```
 
-
-This chunk plots lacZ expression vs. mutation facetted by RpoS level. You'll need to manually run this chunk. 
 
 ```{r, eval = FALSE}
 ggplot(combinedData) + 
