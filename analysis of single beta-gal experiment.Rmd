@@ -17,7 +17,7 @@ Before importing into R, you need to do some preprocessing of the Excel file:
 
 Leave Sheet 1 as it is.
 On Sheet2, copy and paste the OD420 data (i.e. the beta-gal assay itself). Include the whole matrix, even though we won't use most of it in R.
-Add seven more columns immediately to the right: experimenter, date, strain, RpoS, dilutionFactor, volumeAssayed, reactionTime. (note the capitalization and spaces)
+Add seven more columns immediately to the right: experimenter, date, strain, RpoS, dilutionFactor, volumeAssayed, reactionTime, drop, and dropExplanation. (note the capitalization and spaces)
 
 Fill in **each** cell in these seven columns:  
 
@@ -28,6 +28,8 @@ Fill in **each** cell in these seven columns:
 5. For **dilutionFactor**, if you diluted your cells 1:n before adding them to the reaction/plate, give the value of n. (E.g. if you diluted your cells 1:100 before adding a volume to be assayed, enter 100 here.) Enter NA for wells used as a blank.
 6. For **volumeAssayed**, give the volume of (possibly diluted) cells in mL you added to the tube when you assayed. This is usually 0.1 or 0.5. Enter NA for wells used as a blank.
 7. For **reactionTime**, give the length of time the reaction proceeded before adding stop solution in minutes. Enter NA for wells used as a blank.
+8. For **drop**, enter TRUE to drop the data and FALSE to keep the data in the analysis.
+9. For **dropExplanation**, if drop == TRUE, give a brief reason for why the point should be dropped.  
 
 On Sheet3, copy and paste the OD600 data (i.e. the cell densities).
 Add columns 1-5 above (experimenter, date, strain, RpoS, dilution factor) immediately to the right of the pasted data, with the exact same rules as above. The first four will be identical if you layed our your plate the same, but dilution factor will not. It is typically 10 for stationary phase cells.
@@ -52,7 +54,10 @@ source("betaGalAnalysisFunctions.R")
 ###To start the analysis, read in the data.
 
 ```{r}
-fileName <- "myData/LEB 7-30-18 Strain 34 35 36.xlsx" #Enter your Excel file here. Remember that tab completion will help you get the path & name correct
+fileName <- "CRDdata/CRD 8-1-18 Strain 37 38 39 40.xlsx" #Enter your Excel file here. Remember that tab completion will help you get the path & name correct
+
+
+
 OD420data <- read_excel(fileName, sheet = 2)
 OD600data <- read_excel(fileName, sheet = 3)
 ```
@@ -74,7 +79,7 @@ meanCellDensities <-  filter(OD600data, strain != "blank") %>%
                   summarise(meanDensity = mean(trueDensity)) 
   
 
-#includes a step to filter out blanks and "dropped" cells
+#includes a step to filter out blanks and "dropped" wells
 combinedData <-left_join(OD420data, meanCellDensities, by=c("strain", "RpoS")) %>%
                 select(`Blank 420`, experimenter, date, strain, RpoS, dilutionFactor, volumeAssayed, reactionTime, meanDensity, drop) %>%
                 filter(strain != "blank" & drop == "FALSE") %>% 
@@ -91,7 +96,7 @@ Two plots are shown, one using facets to create a plot for each strain, the othe
 ```{r}
 
 ggplot(combinedData) + geom_point(aes(x=RpoS, y=`Miller Units`)) +
-  facet_wrap(~strain, ncol=3, scales = "free") +
+  facet_wrap(~strain, ncol=2, scales = "free") +
   expand_limits(x=0, y=0)
 
 ggplot(combinedData) + geom_point(aes(x=RpoS, y=`Miller Units`, color=strain)) +
