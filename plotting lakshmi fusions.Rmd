@@ -53,7 +53,7 @@ par(opar)
 #calculate mean expression levels + se
 meanFusions <- fusions %>%
                   group_by(strain, rpoS) %>% 
-                  filter(strain == "LB5" | strain == "MKD15") %>%
+                  filter(strain == "LB1" | strain == "MKD13") %>%
                   summarize(meanFusion = mean(millerUnits), seFusion = sd(millerUnits)/sqrt(length(millerUnits)))%>%
               mutate(upper = meanFusion + seFusion, lower = meanFusion - seFusion)
 
@@ -81,6 +81,7 @@ ggplot(meanFusions) +  geom_point(aes(x=rpoS, y= meanFusion)) +
   #add correct axis titles and coordinates
   labs(x = "% of wild-type RpoS", y = "LacZ expression (Miller Units)") +
   expand_limits(x = 0, y = 0) +
+  xlim(-4, 100) +
   geom_segment(data = segmentEndsC, mapping = aes(x = RpoS_minC, xend = RpoS_maxC, y = expression_minC, yend = expression_maxC)) 
  
   
