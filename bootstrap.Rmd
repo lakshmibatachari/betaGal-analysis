@@ -11,9 +11,10 @@ theme_set(theme_classic())
 ```
 
 Import your files here:
-```{r}
+```{r, message = FALSE}
 
-fileNames <- c("myData/LEB 7-19-18 Strain 34 35 36.xlsx", "myData/LEB 7-19-18 Strain 41 42 43.xlsx", "myData/LEB 7-20-18 Strain 34 35 36.xlsx", "myData/LEB 7-20-18 Strain 41 42 43.xlsx", "myData/LEB 7-25-18 Strain 41 42 43.xlsx", "myData/LEB 7-26-18 Strain 34 35 36.xlsx","myData/LEB 7-25-18 Strain 34 35 36 unsure about arabinose conc.xlsx", "myData/LEB 7-26-18 Strain 34 35 36.xlsx", "myData/LEB 7-26-18 Strain 41 42 43.xlsx")
+#gadB mutants
+fileNames <- c("FRdata/7.19.18 FRLZ Strain 31 33.xlsx","FRdata/7.19.18 FRLZ Strain 32 30.xlsx", "FRdata/7.20.18 FRLZ Strain 31 33.xlsx", "FRdata/7.20.18 FRLZ Strain 32 30.xlsx", "FRdata/7.23.18 FRLZ Strain 31 33.xlsx", "FRdata/7.23.18 FRLZ Strain 32 30.xlsx", "FRdata/7.26.18 FRLZ Strain 31 33.xlsx", "FRdata/7.26.18 FRLZ Strain 32 30.xlsx", "FRdata/7.27.18 FRLZ Strain 31 33.xlsx", "FRdata/7.27.18 FRLZ Strain 32 30.xlsx")
 
 processedFiles <- map(fileNames, meanExpressionOneReplicate)
 
@@ -26,13 +27,13 @@ Create vectors/variables we'll need in the next step.
 sampleSize <- 10000
 
 #Set number of biological replicates
-repSize <- 4
+repSize <- 5
 
 #create vector for the 26% RpoS level estimates
 linear26Est <- vector(length=sampleSize)
 
 #define strain
-Strain <- "LZ43"
+Strain <- "FR33"
 
 #store mean expression values for the selected strain at 0%, 26%, and 89%
 rpoS0 <- subset(combinedData, RpoS == 0 & strain == Strain, select = c(meanExpression))
