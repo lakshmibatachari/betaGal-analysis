@@ -1,0 +1,73 @@
+---
+title: "Analysis"
+author: "Lakshmi Batachari"
+date: "8/1/2018"
+output: html_document
+---
+##Requires that you run 'analysis of multiple beta-gal experiments first 
+
+```{r, message=FALSE}
+library(readxl)
+library(tidyverse)
+source("betaGalAnalysisFunctions.R")
+theme_set(theme_classic())
+```
+
+
+Plot mean sensitivity value ± SE for each strain
+```{r}
+
+meanSensitivities <- sensitivities %>%
+                  group_by(strain) %>% 
+                  summarize(meanSensitivity = mean(sensitivity), se = sd(sensitivity)/sqrt(length(sensitivity)))%>%
+              mutate(upperError = meanSensitivity + se, lowerError = meanSensitivity - se)
+
+show(meanSensitivities)
+
+ggplot(meanSensitivities) + 
+  geom_point(aes(x = strain, y = meanSensitivity)) + 
+  geom_errorbar(aes(x = strain, y = meanSensitivity, ymax = upperError, ymin = lowerError, width = 0.1)) + 
+  labs(x = "strain", y = "sensitivity")
+```
+
+Plot histogram of sensitivity values
+```{r}
+ggplot(data=sensitivities, aes(sensitivities$sensitivity)) + 
+  geom_histogram() +
+  facet_wrap(~strain, scales = "free", labeller = genotype) +
+  stat_bin(bins = 15) + 
+  labs(x = "sensitivity")
+  expand_limits(x = 0, y = 0)
+```
+
+
+Test whether sensitivities are significantly different
+```{r}
+##ANOVA test
+
+#sensitivity.aov <- aov(sensitivity ~ strain, data = sensitivities)
+#summary(sensitivity.aov)
+#TukeyHSD(sensitivity.aov)
+
+##Mann whitney test
+
+WT <- "FR31"
+mutant <- "FR33"
+
+twoSampleData <- sensitivities %>%
+  filter(strain == WT | strain == mutant)
+
+wilcox.test(sensitivity~strain, data = twoSampleData)
+
+
+##one-sample t test
+oneSampleData <- sensitivities %>%
+  filter(strain == "FR30")
+
+t.test(set2$sensitivity, mu = 0)
+
+
+
+
+
+```
