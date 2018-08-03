@@ -11,7 +11,7 @@ library(tidyverse)
 theme_set(theme_classic())
 ```
 
-
+Import MKD and LB beta gal data 
 ```{r, echo=FALSE}
 LBfusions<-read.table(file = "LB BetaGal.txt", header = T, sep="\t")
 LBfusions$millerUnits <- LBfusions$millerUnits/10 #Lakshmi failed to take the OD600 dilution into account when she calculated MillerUnits
@@ -49,6 +49,9 @@ par(opar)
 #options(scipen = 0)
 
 ```
+
+
+Alternative: Plot with ggplot
 ```{r}
 #calculate mean expression levels + se
 meanFusions <- fusions %>%
