@@ -44,7 +44,8 @@ processedFiles <- map(fileNames, meanExpressionOneReplicate)
 
 combinedData <- bind_rows(processedFiles)
 ```
-
+ 
+ Plot mean expression vs. RpoS, facetted by strain. 
 ```{r}
 
 ggplot(combinedData) + 
@@ -55,7 +56,7 @@ ggplot(combinedData) +
 
 ```
 
-Plot mean ± SE for each RpoS level
+Plot mean ± SE for each RpoS level for each strain.
 ```{r}
 dayMeans <- combinedData %>% 
               group_by(strain, RpoS) %>% 
@@ -98,46 +99,6 @@ sensitivities <- dataForSensitivity %>%
                   group_by(strain, date, experimenter) %>%
                   summarise(sensitivity = calculateSingleSens(RpoS, meanExpression))
 
-#plot mean sensitivity value ± SE for each strain 
-meanSensitivities <- sensitivities %>%
-                  group_by(strain) %>% 
-                  summarize(meanSensitivity = mean(sensitivity), se = sd(sensitivity)/sqrt(length(sensitivity)))%>%
-              mutate(upperError = meanSensitivity + se, lowerError = meanSensitivity - se)
-
-show(meanSensitivities)
-
-ggplot(meanSensitivities) + 
-  geom_point(aes(x = strain, y = meanSensitivity)) + 
-  geom_errorbar(aes(x = strain, y = meanSensitivity, ymax = upperError, ymin = lowerError, width = 0.1)) + 
-  labs(x = "strain", y = "sensitivity")
-
-
-
-```
-
-Test whether sensitivities are significantly different
-```{r}
-#sensitivity.aov <- aov(sensitivity ~ strain, data = sensitivities)
-#summary(sensitivity.aov)
-#TukeyHSD(sensitivity.aov)
-
-#Mann whitney u
-
-WT <- "FR31"
-mutant <- "FR33"
-
-set1 <- subset(sensitivities, strain == WT)
-set2 <- subset(sensitivities, strain == mutant)
-
-table <- rbind(set1, set2)
-
-#wilcox.test(sensitivity~strain, data = table)
-#t.test(set2$sensitivity, mu = 0)
-
-
-
-
-
 ```
 
 
@@ -164,7 +125,7 @@ If you designed your experiment with only three RpoS levels, delete the the `fil
 #rename strains with genotype and store in function
 genotype <- as_labeller(c(`LZ34` = "ΔargR", `LZ35` = "Δnac", `LZ36` = "ΔntrC", `LZ41` = "argR control", `LZ42` = "nac control", `LZ43` = "ntrC control", `FR30` = "ΔgadX", `FR31` = "ΔgadW", `FR32` = "ΔgadXYW", `FR33` = "ΔgadE", `FR37` = "gadX control", `FR38` = "gadW control", `FR39` = "gadXYW control", `FR40` = "gadE control", `CRD38` = "gadB wt", `CRD39` = "astC wt"))
 
-
+#plot mean ± SE with segment
 dayMeans %>% 
   ggplot() + 
   geom_point(aes(x = RpoS, y = meanAcrossDays), show.legend = FALSE) + 
@@ -185,7 +146,7 @@ dayMeans %>%
 
 ```
 
-
+This code is for plotting control strains. Plots mean expression vs. mutation, facetted by RpoS
 ```{r, eval = FALSE}
 ggplot(combinedData) + 
   geom_point(aes(x=strain, y=meanExpression)) + 
